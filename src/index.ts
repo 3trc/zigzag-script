@@ -14,10 +14,13 @@ async function main() {
   ws.on('error', console.error);
   ws.on('open', function open() {
     console.log('open');
-    // ws.send('something');
+    ws.send({ "op": "login", "args": [1002, "27334"] }.toString(), (err) => {
+      console.log(err);
+    });
   });
   ws.on('message', (json) => {
     try {
+      // console.log(json.toString());
       const data = JSON.stringify(JSON.parse(json.toString()), null, 2) + ',\n';
       fs.appendFileSync('data.json', data, 'utf-8');
     } catch (e) {
