@@ -2,7 +2,8 @@ import WebSocket from 'ws';
 import HttpsProxyAgent from 'https-proxy-agent';
 
 // socks5://127.0.0.1:7890
-const proxy = HttpsProxyAgent('http://127.0.0.1:7890');
+// http://127.0.0.1:7890
+const proxy = HttpsProxyAgent('socks5://127.0.0.1:7890');
 
 async function main() {
   console.log('你好，世界');
