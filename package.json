@@ -9,5 +9,9 @@
   },
   "repository": "https://github.com/3trc/zigzag-script.git",
   "license": "MIT",
-  "private": false
+  "private": false,
+  "dependencies": {
+    "@types/ws": "^8.5.4",
+    "ws": "^8.12.1"
+  }
 }
