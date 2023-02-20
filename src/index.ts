@@ -1,5 +1,6 @@
 import WebSocket from 'ws';
 import HttpsProxyAgent from 'https-proxy-agent';
+import fs from 'fs';
 
 // socks5://127.0.0.1:7890
 // http://127.0.0.1:7890
@@ -15,8 +16,13 @@ async function main() {
     console.log('open');
     // ws.send('something');
   });
-  ws.on('message', function message(data) {
-    console.log('received: %s', data);
+  ws.on('message', (json) => {
+    try {
+      const data = JSON.stringify(JSON.parse(json.toString()), null, 2) + ',\n';
+      fs.appendFileSync('data.json', data, 'utf-8');
+    } catch (e) {
+      console.log(e);
+    }
   });
 }
 
