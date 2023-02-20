@@ -2,6 +2,11 @@
   "name": "zigzag-script",
   "version": "0.1.0",
   "main": "dist/index.js",
+  "scripts": {
+    "build": "tsc",
+    "watch": "tsc --watch",
+    "dev": "node dist/index.js"
+  },
   "repository": "https://github.com/3trc/zigzag-script.git",
   "license": "MIT",
   "private": false
