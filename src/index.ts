@@ -21,6 +21,10 @@ async function main() {
   // console.log(ethers.utils.formatEther(balance));
   // const info = await zksWallet.getAccountState();
   // console.log(info);
+
+  const state = await zksWallet.getAccountState();
+  console.log(state.committed.balances);
+  return;
   const order = await zksWallet.signOrder({
     tokenSell: 'ZZ',
     tokenBuy: 'USDC',
