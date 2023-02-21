@@ -12,6 +12,7 @@
   "private": false,
   "dependencies": {
     "@types/ws": "^8.5.4",
+    "ethers": "^5.7.2",
     "https-proxy-agent": "^5.0.1",
     "ws": "^8.12.1",
     "zksync": "^0.13.1"
