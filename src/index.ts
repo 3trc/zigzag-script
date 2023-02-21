@@ -16,8 +16,12 @@ async function main() {
   const ethProvider = new ethers.providers.JsonRpcProvider(secret.rpcUrl);
   const ethWallet = ethers.Wallet.fromMnemonic(secret.phrase, `m/44'/60'/0'/0/${0}`).connect(ethProvider);
   console.log(ethWallet.address);
-  const a = await ethWallet.getBalance();
-  console.log(ethers.utils.formatEther(a));
+  const balance = await ethWallet.getBalance();
+  console.log(ethers.utils.formatEther(balance));
+  const syncProvider = await zksync.getDefaultProvider('mainnet');
+  const syncWallet = await zksync.Wallet.fromEthSigner(ethWallet, syncProvider);
+  const b = await syncWallet.getBalance('ETH');
+  console.log(ethers.utils.formatEther(b));
 
   // const provider = await zksync.getDefaultProvider('mainnet');
   // const tokens = await provider.getTokens();
