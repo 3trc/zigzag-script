@@ -18,8 +18,20 @@ async function main() {
   console.log(ethWallet.address);
   const zksProvider = await zksync.getDefaultProvider('mainnet');
   const zksWallet = await zksync.Wallet.fromEthSigner(ethWallet, zksProvider);
-  const balance = await zksWallet.getBalance('ZZ');
+  const balance = await zksWallet.getBalance('ZZ', 'verified');
   console.log(ethers.utils.formatEther(balance));
+  const info = await zksWallet.getAccountState();
+  console.log(info);
+  const order = await zksWallet.signOrder({
+    tokenSell: 'ZZ',
+    tokenBuy: 'USDC',
+    ratio: zksync.utils.tokenRatio({
+      ZZ: '1',
+      USDC: '3.5',
+    }),
+    amount: zksProvider.tokenSet.parseToken('ZZ', '1'),
+  });
+  console.log(order);
 }
 
 // async function main() {
