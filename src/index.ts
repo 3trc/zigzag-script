@@ -3,6 +3,7 @@ import HttpsProxyAgent from 'https-proxy-agent';
 import fs from 'fs';
 import * as zksync from 'zksync';
 import { ethers } from 'ethers';
+import moment from 'moment';
 
 const secret = require('../.secret.json');
 
@@ -42,16 +43,18 @@ async function main() {
   const accountId = (await zksWallet.getAccountId())?.toString() || '';
   console.log('账户Id', accountId);
   const order = await zksWallet.signOrder({
-    tokenSell: 'ZZ',
+    tokenSell: 'ETH',
     tokenBuy: 'USDC',
-    ratio: zksync.utils.tokenRatio({ ZZ: '1', USDC: '3.5' }),
-    amount: zksProvider.tokenSet.parseToken('ZZ', '1'),
+    ratio: zksync.utils.tokenRatio({ ETH: '0.001', USDC: '1.699' }),
+    amount: zksProvider.tokenSet.parseToken('ETH', '0.001'),
+    validUntil: moment().add(2, 'm').unix(),
   });
+  console.log(order.ratio);
   const params = {
     op: 'submitorder3',
     args: [
       1,
-      'ZZ-USDC',
+      'ETH-USDC',
       order,
     ],
   };
@@ -73,6 +76,7 @@ async function main() {
   });
   ws.on('message', (json) => {
     try {
+      if (JSON.parse(json.toString())?.op == 'lastprice') return;
       const data = JSON.stringify(JSON.parse(json.toString()), null, 2) + ',\n';
       fs.appendFileSync('data.json', data, 'utf-8');
     } catch (e) {
