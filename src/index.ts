@@ -4,15 +4,25 @@ import fs from 'fs';
 import * as zksync from 'zksync';
 import { ethers } from 'ethers';
 
+const secret = require('../.secret.json');
+
 // socks5://127.0.0.1:7890
 // http://127.0.0.1:7890
 const proxy = HttpsProxyAgent('socks5://127.0.0.1:7890');
 
 async function main() {
   console.log('你好，世界');
-  const provider = await zksync.getDefaultProvider('mainnet');
-  const tokens = await provider.getTokens();
-  console.log(tokens);
+
+  const ethProvider = new ethers.providers.JsonRpcProvider(secret.rpcUrl);
+  const ethWallet = ethers.Wallet.fromMnemonic(secret.phrase, `m/44'/60'/0'/0/${0}`).connect(ethProvider);
+  console.log(ethWallet.address);
+  const a = await ethWallet.getBalance();
+  console.log(ethers.utils.formatEther(a));
+
+  // const provider = await zksync.getDefaultProvider('mainnet');
+  // const tokens = await provider.getTokens();
+  // console.log(tokens.USDC);
+  // const wallet = zksync.Wallet.fromEthSigner()
 }
 
 // async function main() {
