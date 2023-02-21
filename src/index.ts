@@ -22,11 +22,6 @@ async function main() {
   const syncWallet = await zksync.Wallet.fromEthSigner(ethWallet, syncProvider);
   const b = await syncWallet.getBalance('ETH');
   console.log(ethers.utils.formatEther(b));
-
-  // const provider = await zksync.getDefaultProvider('mainnet');
-  // const tokens = await provider.getTokens();
-  // console.log(tokens.USDC);
-  // const wallet = zksync.Wallet.fromEthSigner()
 }
 
 // async function main() {
