@@ -45,13 +45,13 @@ async function main() {
   const order = await zksWallet.signOrder({
     tokenSell: 'ETH',
     tokenBuy: 'USDC',
-    ratio: zksync.utils.tokenRatio({ ETH: '0.001', USDC: '1.699' }),
+    ratio: zksync.utils.tokenRatio({ ETH: '0.001', USDC: '1.69' }),
     amount: zksProvider.tokenSet.parseToken('ETH', '0.001'),
     validUntil: moment().add(2, 'm').unix(),
   });
   console.log(order.ratio);
   const params = {
-    op: 'submitorder3',
+    op: 'submitorder2',
     args: [
       1,
       'ETH-USDC',
