@@ -63,22 +63,26 @@ async function main() {
   ws.on('error', console.error);
   ws.on('open', () => {
     console.log('open');
-    ws.send(JSON.stringify({
-      op: 'login',
-      args: [
-        1,
-        accountId,
-      ],
-    }), (err) => {
-      console.log(err);
-      ws.send(JSON.stringify(params), (err) => console.log);
-    });
+    // ws.send(JSON.stringify({
+    //   op: 'login',
+    //   args: [
+    //     1,
+    //     accountId,
+    //   ],
+    // }), (err) => {
+    //   console.log(err);
+    //   ws.send(JSON.stringify(params), (err) => console.log);
+    // });
   });
   ws.on('message', (json) => {
     try {
-      if (JSON.parse(json.toString())?.op == 'lastprice') return;
-      const data = JSON.stringify(JSON.parse(json.toString()), null, 2) + ',\n';
-      fs.appendFileSync('data.json', data, 'utf-8');
+      const jsonObject = JSON.parse(json.toString());
+      if (jsonObject.op === 'lastprice') {
+        const args = jsonObject.args || [];
+
+        const data = JSON.stringify(jsonObject, null, 2) + ',\n';
+        fs.appendFileSync('data.json', data, 'utf-8');
+      }
     } catch (e) {
       console.log(e);
     }
