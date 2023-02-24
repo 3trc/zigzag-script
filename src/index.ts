@@ -1,92 +1,47 @@
-import WebSocket from 'ws';
-import HttpsProxyAgent from 'https-proxy-agent';
-import fs from 'fs';
 import * as zksync from 'zksync';
-import { ethers } from 'ethers';
-import moment from 'moment';
+import { DingTalk } from 'litebot';
 
-const secret = require('../.secret.json');
-
-// socks5://127.0.0.1:7890
-// http://127.0.0.1:7890
-const proxy = HttpsProxyAgent('socks5://127.0.0.1:7890');
-
-async function zks() {
-  const ethProvider = new ethers.providers.JsonRpcProvider(secret.rpcUrl);
-  const ethWallet = new ethers.Wallet(secret.privateKey, ethProvider);
-  // const ethWallet = ethers.Wallet.fromMnemonic(secret.phrase, `m/44'/60'/0'/0/${0}`).connect(ethProvider);
-  console.log(ethWallet.address);
-  const zksProvider = await zksync.getDefaultProvider('mainnet');
-  const zksWallet = await zksync.Wallet.fromEthSigner(ethWallet, zksProvider);
-  // const balance = await zksWallet.getBalance('ZZ');
-  // console.log(ethers.utils.formatEther(balance));
-  // const info = await zksWallet.getAccountState();
-  // console.log(info);
-
-  const state = await zksWallet.getAccountState();
-  console.log(state.committed.balances);
-  return;
-  const order = await zksWallet.signOrder({
-    tokenSell: 'ZZ',
-    tokenBuy: 'USDC',
-    ratio: zksync.utils.tokenRatio({ ZZ: '1', USDC: '3.5' }),
-    amount: zksProvider.tokenSet.parseToken('ZZ', '1'),
-  });
-  console.log(order);
+export
+function message(text: string) {
+  const secret = require('../.secret.json');
+  new DingTalk(secret.notifier).SendMessage(text);
 }
 
-async function main() {
-  const ethProvider = new ethers.providers.JsonRpcProvider(secret.rpcUrl);
-  const ethWallet = new ethers.Wallet(secret.privateKey, ethProvider);
-  const zksProvider = await zksync.getDefaultProvider('mainnet');
-  const zksWallet = await zksync.Wallet.fromEthSigner(ethWallet, zksProvider);
-  const accountId = (await zksWallet.getAccountId())?.toString() || '';
-  console.log('账户Id', accountId);
-  const order = await zksWallet.signOrder({
-    tokenSell: 'ETH',
-    tokenBuy: 'USDC',
-    ratio: zksync.utils.tokenRatio({ ETH: '0.001', USDC: '1.69' }),
-    amount: zksProvider.tokenSet.parseToken('ETH', '0.001'),
-    validUntil: moment().add(2, 'm').unix(),
-  });
-  console.log(order.ratio);
-  const params = {
-    op: 'submitorder2',
-    args: [
-      1,
-      'ETH-USDC',
-      order,
-    ],
-  };
-  console.log(params);
-  const ws = new WebSocket('wss://zigzag-exchange.herokuapp.com', { agent: proxy });
-  ws.on('error', console.error);
-  ws.on('open', () => {
-    console.log('open');
-    // ws.send(JSON.stringify({
-    //   op: 'login',
-    //   args: [
-    //     1,
-    //     accountId,
-    //   ],
-    // }), (err) => {
-    //   console.log(err);
-    //   ws.send(JSON.stringify(params), (err) => console.log);
-    // });
-  });
-  ws.on('message', (json) => {
-    try {
-      const jsonObject = JSON.parse(json.toString());
-      if (jsonObject.op === 'lastprice') {
-        const args = jsonObject.args || [];
+async function getZZBalance(provider: zksync.Provider, address: string) {
+  const state = await provider.getState(address);
+  return state?.committed?.balances?.ZZ || '';
+}
 
-        const data = JSON.stringify(jsonObject, null, 2) + ',\n';
-        fs.appendFileSync('data.json', data, 'utf-8');
+const addressList = [
+  '0x28dF8c4d5fc59cA685546e817772181Fb717E503',
+  '0x0Fd2B60c6a83F91083c644C1f677797BfD63209A',
+  '0x05484987F0d85dAd6F10a53B0Fd57AF880A0ff71',
+  '0x7F3b3C3f7e69E91D95a32f0A054B8C1B3167865C',
+  '0xC6d908fb8ad05D4c5664e1770878892BCe37Cb06',
+];
+
+async function main() {
+  message('运行了');
+  const data = { } as any;
+  const provider = await zksync.getDefaultProvider('mainnet');
+  let index = 0;
+  setInterval(async () => {
+    try {
+      const current = index % addressList.length;
+      const address = addressList[current];
+      console.log(address, '...');
+      const balance = await getZZBalance(provider, address);
+      console.log('ZZ: ', balance);
+      const oldBalance = data[address];
+      if (balance !== oldBalance && oldBalance != null) {
+        message(`变化 ${address} ${balance}`);
       }
+      data[address] = balance;
+      index++;
     } catch (e) {
       console.log(e);
     }
-  });
+  }, 3000);
 }
 
 main();
