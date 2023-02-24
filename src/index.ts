@@ -13,6 +13,10 @@ async function getZZBalance(provider: zksync.Provider, address: string) {
 }
 
 const addressList = [
+  '0xf2f7ad044dfbaa417249c8568788d7aa1e6f155b',
+  '0x52d0a0775a819766cecd6edccc45a4a5bada7ed6',
+  '0x10f431603f36d784710e581b5cf003290a861e00',
+
   '0x28dF8c4d5fc59cA685546e817772181Fb717E503',
   '0x0Fd2B60c6a83F91083c644C1f677797BfD63209A',
   '0x05484987F0d85dAd6F10a53B0Fd57AF880A0ff71',
@@ -41,7 +45,7 @@ async function main() {
     } catch (e) {
       console.log(e);
     }
-  }, 3000);
+  }, 2000);
 }
 
 main();
