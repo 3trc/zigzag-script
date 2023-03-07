@@ -38,9 +38,10 @@ async function main() {
   );
   const amounts = list.map((amount) => Number(ethers.utils.formatUnits(amount, 18)));
   
+  let countZZ = 1;
   amounts.forEach((amount, index) => {
-    if (amount > 0) {
-      console.log(`${myAccountName(index)}: ${amount} ZZ`);
+    if (amount >= 0.1) {
+      console.log(countZZ++, `${myAccountName(index)}: ${amount} ZZ`);
     }
   });
   
