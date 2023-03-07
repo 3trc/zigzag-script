@@ -15,6 +15,11 @@ async function getZZBalance(provider: zksync.Provider, address: string) {
   return state?.committed?.balances?.ZZ || '0';
 }
 
+async function getETHBalance(provider: zksync.Provider, address: string) {
+  const state = await provider.getState(address);
+  return state?.committed?.balances?.ETH || '0';
+}
+
 function createWallet(index: number) {
   return ethers.Wallet.fromMnemonic(secret.mnemonic, `m/44'/60'/0'/0/${index}`);
 }
@@ -22,8 +27,8 @@ function createWallet(index: number) {
 async function main() {
   const provider = await zksync.getDefaultProvider('mainnet');
   const list = await Promise.all(
-    Array(50).fill(0).map((_, index) => createWallet(index).address)
-      .map((address) => getZZBalance(provider, address))
+    Array(200).fill(0).map((_, index) => createWallet(index).address)
+      .map((address) => getETHBalance(provider, address))
   );
   const amounts = list.map((amount) => Number(ethers.utils.formatUnits(amount, 18)));
   console.log(amounts);
