@@ -24,17 +24,30 @@ function createWallet(index: number) {
   return ethers.Wallet.fromMnemonic(secret.mnemonic, `m/44'/60'/0'/0/${index}`);
 }
 
+function myAccountName(index: number) {
+  if (index < 1) return '主账户';
+  else if (index < 3) return `搁置账户${index}`;
+  return `子账户${index - 2}`;
+}
+
 async function main() {
   const provider = await zksync.getDefaultProvider('mainnet');
   const list = await Promise.all(
     Array(200).fill(0).map((_, index) => createWallet(index).address)
-      .map((address) => getETHBalance(provider, address))
+      .map((address) => getZZBalance(provider, address))
   );
   const amounts = list.map((amount) => Number(ethers.utils.formatUnits(amount, 18)));
-  console.log(amounts);
-  let sum = 0;
-  amounts.forEach((amount) => sum += amount);
-  console.log(sum);
+  
+  amounts.forEach((amount, index) => {
+    if (amount > 0) {
+      console.log(`${myAccountName(index)}: ${amount} ZZ`);
+    }
+  });
+  
+  // console.log(amounts);
+  // let sum = 0;
+  // amounts.forEach((amount) => sum += amount);
+  // console.log(sum);
 }
 
 main();
