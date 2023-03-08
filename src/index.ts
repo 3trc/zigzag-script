@@ -34,23 +34,23 @@ async function main() {
   const provider = await zksync.getDefaultProvider('mainnet');
   const list = await Promise.all(
     Array(200).fill(0).map((_, index) => createWallet(index).address)
-      .map((address) => getETHBalance(provider, address))
+      .map((address) => getZZBalance(provider, address))
   );
   const amounts = list.map((amount) => Number(ethers.utils.formatUnits(amount, 18)));
   
-  // let countZZ = 1;
-  // amounts.forEach((amount, index) => {
-  //   if (amount >= 0.1) {
-  //     console.log(countZZ++, `${myAccountName(index)}: ${amount} ZZ`);
-  //   }
-  // });
-
-  let countETH = 1;
+  let countZZ = 1;
   amounts.forEach((amount, index) => {
-    if (amount >= 0.005) {
-      console.log(countETH++, `${myAccountName(index)}: ${amount} ETH`);
+    if (amount >= 0.0001) {
+      console.log(countZZ++, `${myAccountName(index)}: ${amount} ZZ`);
     }
   });
+
+  // let countETH = 1;
+  // amounts.forEach((amount, index) => {
+  //   if (amount >= 0.001) {
+  //     console.log(countETH++, `${myAccountName(index)}: ${amount} ETH`);
+  //   }
+  // });
   
   // console.log(amounts);
   let sum = 0;
